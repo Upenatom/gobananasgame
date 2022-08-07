@@ -1,0 +1,76 @@
+body{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    row-gap: 10px
+}
+#threerow{
+    display:flex;
+    flex-direction:row;
+    column-gap: 10px;  
+}
+h1{
+    border:1px solid black;
+}
+#instruct{
+    border:1px solid black;
+    width:900px;
+    height:100px;
+}
+#theme{
+    border:1px solid black;
+}
+.boxcont{
+    border:1px solid black;
+    height: 300px;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    }
+#p1name{
+    border:1px solid black;
+    
+}
+#p1points{
+    border:1px solid black;
+    gap: 10px;
+}
+#p1solve{
+    border:1px solid black;
+    gap: 10px;
+}
+#gameboard{
+    border:1px solid black;
+    width:900px;
+    height:300px
+}
+#p2contain{
+    border:1px solid black;
+    height:300px;
+    width:300px;
+}
+#p2name{
+    border:1px solid black;
+}
+#p2points{
+    border:1px solid black;
+}
+#p2solve{
+    border:1px solid black;
+}
+#spinbutt{
+    border:1px solid black;
+    height:200px;
+    width:200px;
+}
+#spinner{
+    border:1px solid black;
+    height: 100px;
+    width: 600px
+}
+#letters{
+    border:1px solid black;
+    width:900px;
+    height: 100px
+}
