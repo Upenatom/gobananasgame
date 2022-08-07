@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Ranchers&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=NTR&display=swap');
 body{
     display:flex;
     flex-direction:column;
@@ -11,6 +13,13 @@ body{
 }
 h1{
     border:1px solid black;
+    font-family: 'Ranchers', cursive;
+    font-size: 75px;
+    vertical-align: top;
+    width:900px;
+    height:100px;
+    text-align: center;
+    margin:0px
 }
 #statusbar{
     display: flex;
@@ -19,60 +28,75 @@ h1{
     width:900px;
     height:150px;
     align-items: center;
+    row-gap:10px;
 }
 #round{
     height:50px;
     width:200px;
     border:1px solid black;
-    text-align: center
+    text-align: center;
+    font-size: 30px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
 }
 #instruct{
     width:900px;
     height:100px;
     border:1px solid black;
-    text-align:center
+    text-align:center;
+    font-family: 'NTR', sans-serif;
+    font-size: 30px;
+    vertical-align:top;
+
 }
 #theme{
     border:1px solid black;
+    width:900px;
+    height:100px;
+    font-family: 'NTR', sans-serif;
+    font-size: 40px;
+    
 }
 .boxcont{
     border:1px solid black;
-    height: 300px;
-    width: 300px;
+    height: 150px;
+    width: 200px;
     display: flex;
     flex-direction: column;
     gap: 10px;
+    justify-content: space-around;
     }
 #p1name{
     border:1px solid black;
+    text-align: center;
     
 }
 #p1points{
     border:1px solid black;
     gap: 10px;
+    text-align: center;
 }
 #p1solve{
     border:1px solid black;
     gap: 10px;
+    text-align: center;
 }
 #gameboard{
     border:1px solid black;
     width:900px;
     height:300px
 }
-#p2contain{
-    border:1px solid black;
-    height:300px;
-    width:300px;
-}
+
 #p2name{
     border:1px solid black;
+    text-align: center;
 }
 #p2points{
     border:1px solid black;
+    text-align: center;
 }
 #p2solve{
     border:1px solid black;
+    text-align: center;
 }
 #spinbutt{
     border:1px solid black;
