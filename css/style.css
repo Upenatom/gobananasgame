@@ -12,10 +12,25 @@ body{
 h1{
     border:1px solid black;
 }
-#instruct{
+#statusbar{
+    display: flex;
+    flex-direction:column;
     border:1px solid black;
     width:900px;
+    height:150px;
+    align-items: center;
+}
+#round{
+    height:50px;
+    width:200px;
+    border:1px solid black;
+    text-align: center
+}
+#instruct{
+    width:900px;
     height:100px;
+    border:1px solid black;
+    text-align:center
 }
 #theme{
     border:1px solid black;
