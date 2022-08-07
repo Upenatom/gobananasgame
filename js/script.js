@@ -2,6 +2,16 @@
 const numOfRounds = 3;
 const timerSolvePuzz = 500; //500ms
 /*---- app's state (variables) ----*/
+let round;
+let p1Name;
+let p1Points;
+let p2Name;
+let p2points;
+let instruct;
+let trackerArr;
+let compareArr;
+let currentWord;
+let playerchoice;
 
 /*---- cached element references ----*/
 const roundEl = document.getElementById("round");
@@ -25,3 +35,16 @@ spinButtEl.addEventListener("keypress");
 lettersEl.addEventListener("click");
 
 /*---- functions ----*/
+function init() {}
+function render() {}
+function correctLetter() {}
+function wrongLetter() {}
+function switchPlayer() {}
+function checkLetter() {}
+function updateTrackerArr() {}
+function endRoundCheck() {}
+function randomPoints() {}
+function revealBoardLetter() {}
+function createGameBoard() {}
+function disableLetter() {}
+function switchbutton() {} //switch solve buttons to buzzers
