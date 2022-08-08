@@ -1,5 +1,5 @@
 /*---- constants ----*/
-import { words } from "./library.js";
+import { words, lettersArray } from "./library.js";
 
 // const words = [
 //   [
@@ -75,7 +75,6 @@ let word;
 let p1Solve;
 let p2Solve;
 let theme;
-let lettersArr;
 
 /*---- cached element references ----*/
 const roundEl = document.getElementById("round");
@@ -122,12 +121,13 @@ function newRound(wordArr) {
   round = round + 1;
   word = randomWord(wordArr);
   theme = word[0];
-  generateBoard(word);
+  generateBoards(word);
 }
-function generateBoard(selectedWord) {
+function generateBoards(selectedWord) {
   let spltword = [];
   let wordDivContainer = [];
   let charDivContainer = [];
+  let letterDivContainer = [];
   let spltphrase = [];
   let count = 0;
   //split phrase into array of words: [word,word,word]
@@ -166,6 +166,14 @@ function generateBoard(selectedWord) {
       }
     }
   }
+  // generate letters to choose from and add to letters container
+  lettersArray.forEach(function (letter, i) {
+    letterDivContainer[i] = document.createElement("div");
+    letterDivContainer[i].id = letter;
+    letterDivContainer[i].textContent = letter;
+    letterDivContainer[i].classList.add("chooseletter");
+    lettersEl.append(letterDivContainer[i]);
+  });
 }
 function render() {
   roundEl.textContent = `Round ${round} of ${numOfRounds}`;
