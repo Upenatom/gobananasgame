@@ -1,62 +1,62 @@
 /*---- constants ----*/
-// import { words } from "./library.js";
+import { words } from "./library.js";
 
-const words = [
-  [
-    "STAR WARS",
-    "STORM TROOPER",
-    `"IT'S A TRAP!"`,
-    `"PATIENCE YOU MUST LEARN"`,
-    `"I FIND YOUR LACK OF FAITH DISTURBING"`,
-    "OBI-WAN KENOBI",
-    "GENERAL GRIEVOUS",
-    "AHSOKA TANO",
-    `"YOUR PATH YOU MUST DECIDE"`,
-    "BOUNTY HUNTER",
-    "BE CAREFUL NOT TO CHOKE ON YOUR ASPIRATIONS",
-  ],
-  [
-    "FOOD",
-    "MORROCAN CHICKEN STEW",
-    "MACARONI AND CHEESE",
-    "DOUBLE CHOLATE LAYER CAKE",
-    "CEDAR PLANK SALMON",
-    "BOUILLABAISSE",
-    "CHICKEN SHAWARA",
-    "KUNG PAO CHICKEN",
-    "SPICEY FRIED BASIL RICE",
-    "MASALA DOSA",
-    "SEAFOOD PAELLA",
-    "BUTTERED TOAST WITH MARMITE",
-    "SHISH KEBAB",
-    "PASTEL DE NATA",
-    "TOM YUM GOONG",
-    "PEKING DUCK",
-    "MASSAMAN CURRY",
-  ],
-  [
-    "TV-SHOWS",
-    "FRESH PRINCE OF BEL-AIR",
-    "BREAKING BAD",
-    "WHEEL OF FORTUNE",
-    "HOUSE OF CARDS",
-    "THE SOPRANOS",
-    "ARRESTED DEVELOPMENT",
-    "CURB YOUR ENTHUSIASM",
-    "ALL IN THE FAMILY",
-    "SONS OF ANARCHY",
-    "I LOVE LUCY",
-    "BATTLESTAR GALACTICA",
-    `IT'S ALWAYS SUNNY IN PHILADELPHIA`,
-    "FREAKS AND GEEKS",
-    "DOCTOR WHO",
-    `LATE NIGHT WITH CONAN O'BRIEN`,
-    "FAWLTY TOWERS",
-    "BUFFY THE VAMPIRE SLAYER",
-    "GAME OF THRONES",
-    "JERSEY SHORE",
-  ],
-];
+// const words = [
+//   [
+//     "STAR WARS",
+//     "STORM TROOPER",
+//     `"IT'S A TRAP!"`,
+//     `"PATIENCE YOU MUST LEARN"`,
+//     `"I FIND YOUR LACK OF FAITH DISTURBING"`,
+//     "OBI-WAN KENOBI",
+//     "GENERAL GRIEVOUS",
+//     "AHSOKA TANO",
+//     `"YOUR PATH YOU MUST DECIDE"`,
+//     "BOUNTY HUNTER",
+//     "BE CAREFUL NOT TO CHOKE ON YOUR ASPIRATIONS",
+//   ],
+//   [
+//     "FOOD",
+//     "MORROCAN CHICKEN STEW",
+//     "MACARONI AND CHEESE",
+//     "DOUBLE CHOLATE LAYER CAKE",
+//     "CEDAR PLANK SALMON",
+//     "BOUILLABAISSE",
+//     "CHICKEN SHAWARA",
+//     "KUNG PAO CHICKEN",
+//     "SPICEY FRIED BASIL RICE",
+//     "MASALA DOSA",
+//     "SEAFOOD PAELLA",
+//     "BUTTERED TOAST WITH MARMITE",
+//     "SHISH KEBAB",
+//     "PASTEL DE NATA",
+//     "TOM YUM GOONG",
+//     "PEKING DUCK",
+//     "MASSAMAN CURRY",
+//   ],
+//   [
+//     "TV-SHOWS",
+//     "FRESH PRINCE OF BEL-AIR",
+//     "BREAKING BAD",
+//     "WHEEL OF FORTUNE",
+//     "HOUSE OF CARDS",
+//     "THE SOPRANOS",
+//     "ARRESTED DEVELOPMENT",
+//     "CURB YOUR ENTHUSIASM",
+//     "ALL IN THE FAMILY",
+//     "SONS OF ANARCHY",
+//     "I LOVE LUCY",
+//     "BATTLESTAR GALACTICA",
+//     `IT'S ALWAYS SUNNY IN PHILADELPHIA`,
+//     "FREAKS AND GEEKS",
+//     "DOCTOR WHO",
+//     `LATE NIGHT WITH CONAN O'BRIEN`,
+//     "FAWLTY TOWERS",
+//     "BUFFY THE VAMPIRE SLAYER",
+//     "GAME OF THRONES",
+//     "JERSEY SHORE",
+//   ],
+// ];
 
 const numOfRounds = 3;
 const timerSolvePuzz = 500; //500ms
@@ -99,13 +99,13 @@ const themeEl = document.getElementById("theme");
 // spinButtEl.addEventListener("keypress");
 // lettersEl.addEventListener("click");
 
-init(words);
+init();
 render();
-console.log(word);
-
+newRound(words);
+render();
 /*---- functions ----*/
-function init(wordArr) {
-  round = 1;
+function init() {
+  round = 0;
   p1Name = "Player 1";
   p1Points = 0;
   p2Name = "Player 2";
@@ -117,43 +117,63 @@ function init(wordArr) {
   p1Solve = "SOLVE";
   p2Solve = "SOLVE";
   theme = "The word or phrase hint will appear here";
-  lettersArr = [
-    "A",
-    "B",
-    "C",
-    "D",
-    "E",
-    "F",
-    "G",
-    "H",
-    "I",
-    "J",
-    "K",
-    "L",
-    "M",
-    "N",
-    "O",
-    "P",
-    "Q",
-    "R",
-    "S",
-    "T",
-    "U",
-    "V",
-    "W",
-    "X",
-    "Y",
-    "Z",
-  ];
+}
+function newRound(wordArr) {
+  round = round + 1;
   word = randomWord(wordArr);
+  theme = word[0];
+  generateBoard(word);
+}
+function generateBoard(selectedWord) {
+  let spltword = [];
+  let wordDivContainer = [];
+  let charDivContainer = [];
+  let spltphrase = [];
+  let count = 0;
+  //split phrase into array of words: [word,word,word]
+  spltphrase = selectedWord[1].split(" ");
+  console.log(spltphrase);
+  //split into array of array of characters:[['a','b','c'],['d','f',c],['y','t','a']]
+  spltphrase.forEach((word, i) => {
+    spltword[i] = word.split("");
+  });
+  console.log(spltword);
+  //create div containers for word characters
+  for (let i = 0; i < spltphrase.length; i++) {
+    wordDivContainer[i] = document.createElement("div");
+    wordDivContainer[i].classList.add("wordContainer");
+    gameBoardEl.append(wordDivContainer[i]);
+    for (let j = 0; j < spltword[i].length; j++) {
+      count = count + 1;
+      charDivContainer[j] = document.createElement("div");
+      charDivContainer[j].id = `gbLetter${count}`;
+      charDivContainer[j].classList.add("letterContainer");
+      wordDivContainer[i].append(charDivContainer[j]);
+      //Show characters in the squares if not letters of alphabet
+      if (
+        spltword[i][j] === "'" ||
+        spltword[i][j] === "-" ||
+        spltword[i][j] === "!" ||
+        spltword[i][j] === "?" ||
+        spltword[i][j] === '"' ||
+        spltword[i][j] === "." ||
+        spltword[i][j] === ":" ||
+        spltword[i][j] === ","
+      ) {
+        charDivContainer[j].classList.remove("letterContainer");
+        charDivContainer[j].classList.add("symbols");
+        charDivContainer[j].textContent = spltword[i][j];
+      }
+    }
+  }
 }
 function render() {
   roundEl.textContent = `Round ${round} of ${numOfRounds}`;
   instructEl.textContent = instruct;
   p1NameEl.textContent = p1Name;
   p2NameEl.textContent = p2Name;
-  p1PointsEl.textContent = `Points: ${p2Points}`;
-  p2PointsEl.textContent = `Points: ${p2Points}`;
+  p1PointsEl.textContent = `${p2Points}`;
+  p2PointsEl.textContent = `${p2Points}`;
   p1SolveEl.textContent = p1Solve;
   p2SolveEl.textContent = p2Solve;
   themeEl.textContent = theme;
@@ -165,7 +185,8 @@ function randomWord(wordArr) {
   let themeIndex = Math.floor(Math.random() * wordArr.length);
   let wordIndex =
     Math.floor(Math.random() * (wordArr[themeIndex].length - 1) - 1 + 1) + 1;
-  return [wordArr[themeIndex][0], wordArr[themeIndex][wordIndex], wordIndex];
+  //return array that contains [theme,word]
+  return [wordArr[themeIndex][0], wordArr[themeIndex][wordIndex]];
 }
 function randomPlayerSelect() {}
 function correctLetter() {}
