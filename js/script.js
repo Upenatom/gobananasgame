@@ -1,58 +1,62 @@
 /*---- constants ----*/
 // import { words } from "./library.js";
 
-const STAR_WARS = [
-  "STORM TROOPER",
-  `"IT'S A TRAP!"`,
-  `"PATIENCE YOU MUST LEARN"`,
-  `"I FIND YOUR LACK OF FAITH DISTURBING"`,
-  "OBI-WAN KENOBI",
-  "GENERAL GRIEVOUS",
-  "AHSOKA TANO",
-  `"YOUR PATH YOU MUST DECIDE"`,
-  "BOUNTY HUNTER",
-  "BE CAREFUL NOT TO CHOKE ON YOUR ASPIRATIONS",
+const words = [
+  [
+    "STAR WARS",
+    "STORM TROOPER",
+    `"IT'S A TRAP!"`,
+    `"PATIENCE YOU MUST LEARN"`,
+    `"I FIND YOUR LACK OF FAITH DISTURBING"`,
+    "OBI-WAN KENOBI",
+    "GENERAL GRIEVOUS",
+    "AHSOKA TANO",
+    `"YOUR PATH YOU MUST DECIDE"`,
+    "BOUNTY HUNTER",
+    "BE CAREFUL NOT TO CHOKE ON YOUR ASPIRATIONS",
+  ],
+  [
+    "FOOD",
+    "MORROCAN CHICKEN STEW",
+    "MACARONI AND CHEESE",
+    "DOUBLE CHOLATE LAYER CAKE",
+    "CEDAR PLANK SALMON",
+    "BOUILLABAISSE",
+    "CHICKEN SHAWARA",
+    "KUNG PAO CHICKEN",
+    "SPICEY FRIED BASIL RICE",
+    "MASALA DOSA",
+    "SEAFOOD PAELLA",
+    "BUTTERED TOAST WITH MARMITE",
+    "SHISH KEBAB",
+    "PASTEL DE NATA",
+    "TOM YUM GOONG",
+    "PEKING DUCK",
+    "MASSAMAN CURRY",
+  ],
+  [
+    "TV-SHOWS",
+    "FRESH PRINCE OF BEL-AIR",
+    "BREAKING BAD",
+    "WHEEL OF FORTUNE",
+    "HOUSE OF CARDS",
+    "THE SOPRANOS",
+    "ARRESTED DEVELOPMENT",
+    "CURB YOUR ENTHUSIASM",
+    "ALL IN THE FAMILY",
+    "SONS OF ANARCHY",
+    "I LOVE LUCY",
+    "BATTLESTAR GALACTICA",
+    `IT'S ALWAYS SUNNY IN PHILADELPHIA`,
+    "FREAKS AND GEEKS",
+    "DOCTOR WHO",
+    `LATE NIGHT WITH CONAN O'BRIEN`,
+    "FAWLTY TOWERS",
+    "BUFFY THE VAMPIRE SLAYER",
+    "GAME OF THRONES",
+    "JERSEY SHORE",
+  ],
 ];
-const FOOD = [
-  "MORROCAN CHICKEN STEW",
-  "MACARONI AND CHEESE",
-  "DOUBLE CHOLATE LAYER CAKE",
-  "CEDAR PLANK SALMON",
-  "BOUILLABAISSE",
-  "CHICKEN SHAWARA",
-  "KUNG PAO CHICKEN",
-  "SPICEY FRIED BASIL RICE",
-  "MASALA DOSA",
-  "SEAFOOD PAELLA",
-  "BUTTERED TOAST WITH MARMITE",
-  "SHISH KEBAB",
-  "PASTEL DE NATA",
-  "TOM YUM GOONG",
-  "PEKING DUCK",
-  "MASSAMAN CURRY",
-];
-const TV_SHOWS = [
-  "FRESH PRINCE OF BEL-AIR",
-  "BREAKING BAD",
-  "WHEEL OF FORTUNE",
-  "HOUSE OF CARDS",
-  "THE SOPRANOS",
-  "ARRESTED DEVELOPMENT",
-  "CURB YOUR ENTHUSIASM",
-  "ALL IN THE FAMILY",
-  "SONS OF ANARCHY",
-  "I LOVE LUCY",
-  "BATTLESTAR GALACTICA",
-  `IT'S ALWAYS SUNNY IN PHILADELPHIA`,
-  "FREAKS AND GEEKS",
-  "DOCTOR WHO",
-  `LATE NIGHT WITH CONAN O'BRIEN`,
-  "FAWLTY TOWERS",
-  "BUFFY THE VAMPIRE SLAYER",
-  "GAME OF THRONES",
-  "JERSEY SHORE",
-];
-const words = [STAR_WARS, FOOD, TV_SHOWS];
 
 const numOfRounds = 3;
 const timerSolvePuzz = 500; //500ms
@@ -159,8 +163,9 @@ function render() {
 }
 function randomWord(wordArr) {
   let themeIndex = Math.floor(Math.random() * wordArr.length);
-  let wordIndex = Math.floor(Math.random() * wordArr[themeIndex].length);
-  return [themeIndex, wordArr[themeIndex][wordIndex]];
+  let wordIndex =
+    Math.floor(Math.random() * (wordArr[themeIndex].length - 1) - 1 + 1) + 1;
+  return [wordArr[themeIndex][0], wordArr[themeIndex][wordIndex], wordIndex];
 }
 function randomPlayerSelect() {}
 function correctLetter() {}
