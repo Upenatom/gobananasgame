@@ -2,13 +2,13 @@
 import { words, lettersArray } from "./library.js";
 
 const spinnerArr = [
-  100,
-  150,
-  200,
-  250,
-  300,
-  350,
-  500,
+  "100",
+  "150",
+  "200",
+  "250",
+  "300",
+  "350",
+  "500",
   "LOSE TURN",
   "LOSE POINTS",
 ];
@@ -20,15 +20,14 @@ let player;
 let instruct;
 let trackerArr;
 let compareCharArr; //array to compare guessed letter with letters in word
-let currentWord;
-let playerchoice;
 let word;
-let p1Solve;
-let p2Solve;
 let theme;
 let currentPlayer;
 let spinResult = 0;
-let targetLetter;
+let spinButtStatus;
+let letterButtStatus;
+let p1Solve;
+let p2Solve;
 /*---- cached element references ----*/
 const roundEl = document.getElementById("round");
 const instructEl = document.getElementById("instruct");
@@ -53,35 +52,34 @@ const spin1El = document.getElementById("spin1");
 // lettersEl.addEventListener("click");
 
 init();
+newRound();
 render();
-newRound(words);
-render();
-spinButtEl.addEventListener("click", spinIt);
 
 /*---- FUNCTIONS ----*/
-function checkLetter() {}
 function init() {
   round = 0;
   player = [
     {
       name: "Player 1",
+      wins: 0,
       points: 0,
     },
     {
       name: "Player 2",
+      wins: 0,
       points: 0,
     },
   ];
-
-  instruct = `Let's get ready to play!!
-    Please enter your names in the prompt boxes`;
+  currentPlayer = player[0];
+  instruct = `${currentPlayer.name} press the spin button`;
   trackerArr = [];
   compareCharArr = [];
   p1Solve = "SOLVE";
   p2Solve = "SOLVE";
   theme = "The word or phrase hint will appear here";
   spin1El.textContent = "0";
-  currentPlayer = player[0];
+  spinButtStatus = true;
+  letterButtStatus = false;
 }
 function render() {
   roundEl.textContent = `Round ${round} of ${numOfRounds}`;
@@ -94,10 +92,11 @@ function render() {
   lettersEl;
   spin1El.textContent = spinResult;
   spinButtEl;
+  buttonState();
 }
-function newRound(wordArr) {
+function newRound() {
   round = round + 1;
-  word = randomWord(wordArr);
+  word = randomWord(words);
   theme = word[0];
   generateBoards(word);
 }
@@ -167,26 +166,65 @@ function randomWord(wordArr) {
   return [wordArr[themeIndex][0], wordArr[themeIndex][wordIndex]];
 }
 //returns a random element from an array and adjusts player totals
-function spinIt() {
+function playerSpin() {
   spinResult = spinnerArr[randomNumberGen(spinnerArr.length - 1, 0)];
   render();
   if (spinResult === "LOSE TURN") {
+    render();
     switchPlayer();
   } else if (spinResult === "LOSE POINTS") {
     currentPlayer.points = 0;
+    render();
     switchPlayer();
   } else if (spinResult !== "LOSE TURN" || spinResult !== "LOSE POINTS") {
     instruct = `${currentPlayer.name}, choose a letter or click solve to solve the puzzle`;
-    render();
     //deactivate spinner button so that player can't spin again.
-    spinButtEl.removeEventListener("click", spinIt);
-    //activate letters button so player can choose letter.
-    lettersEl.addEventListener("click", function (e) {
-      checkBoard(e.target.id);
-      console.log(trackerArr);
-    });
+    //activate letter buttons
+    spinButtStatus = false;
+    letterButtStatus = true;
+    render();
   }
+  console.log(spinResult);
 }
+function checkBoard(letter) {
+  //return true if selected character exists
+  let x = compareCharArr.some(function (char) {
+    return char === letter;
+  });
+  if (x === true) {
+    letterButtStatus = false;
+    buttonState();
+    compareCharArr.forEach(function (char, i) {
+      if (char === letter) {
+        currentPlayer.points = currentPlayer.points + parseInt(spinResult);
+        document.getElementById(i).textContent = letter;
+        document.getElementById(i).classList.remove("letterContainer");
+        document.getElementById(i).classList.add("guessedletter");
+      }
+    });
+    //create temp array to copy items over taht aren't the target letter then reassign to tempArr
+    let tempArr = [];
+    trackerArr.forEach(function (char, i) {
+      if (
+        char !== letter &&
+        char !== `'` &&
+        char !== `"` &&
+        char !== "!" &&
+        char !== "?" &&
+        char !== "-"
+      ) {
+        tempArr.push(trackerArr[i]);
+      }
+    });
+    //overwrite trackerArr with tempArr
+    trackerArr = tempArr;
+    //Round Win Check
+    render();
+    switchPlayer();
+  } else switchPlayer();
+  console.log(trackerArr);
+}
+
 function randomNumberGen(highNum, lowNum) {
   return Math.floor(Math.random() * (highNum - lowNum + 1)) + lowNum;
 }
@@ -194,25 +232,31 @@ function switchPlayer() {
   if (currentPlayer === player[0]) {
     currentPlayer = player[1];
     instruct = `${player[1].name} Hit the SPIN IT!! <spacebar> or click SOLVE <z>`;
+    spinButtStatus = true;
+    letterButtStatus = false;
   } else if (currentPlayer === player[1]) {
     currentPlayer = player[0];
     instruct = `${player[0].name} Hit the SPIN IT!! <spacebar> or click SOLVE <z>`;
+    spinButtStatus = true;
+    letterButtStatus = false;
+  }
+  render();
+}
+function buttonState() {
+  if (spinButtStatus === true) {
+    spinButtEl.addEventListener("click", playerSpin);
+  } else spinButtEl.removeEventListener("click", playerSpin);
+  if (letterButtStatus === true) {
+    // lettersEl.addEventListener("click", function (e) {
+    //   checkBoard(e.target.id);
+    // });
+    lettersEl.addEventListener("click", removeLetter);
+  } else if (letterButtStatus === false) {
+    lettersEl.removeEventListener("click", removeLetter);
   }
 }
-function checkBoard(letter) {
-  compareCharArr.forEach(function (char, i) {
-    if (char === letter) {
-      currentPlayer.points = currentPlayer.points + spinResult;
-      document.getElementById(i).textContent = letter;
-      trackerArr.splice(i, 1);
-      render();
-    }
-  });
+function removeLetter(e) {
+  e.target.classList.remove("chooseletter");
+  e.target.classList.add("chooseletterclose");
+  checkBoard(e.target.id);
 }
-function randomPlayerSelect() {}
-function correctLetter() {}
-function wrongLetter() {}
-function endRoundCheck() {}
-function revealBoardLetter() {}
-function disableLetter() {}
-function switchbutton() {} //tobble solve buttons to buzzers

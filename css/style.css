@@ -64,7 +64,7 @@ h1{
     border:10px solid black;
     border-radius:25px;
     background-color: yellow;
-    height: 400px;
+    height: 250px;
     width: 200px;
     display: flex;
     flex-direction: column;
@@ -135,7 +135,7 @@ h1{
 }
 .guessedletter{
     font-family: 'NTR', sans-serif;
-    border:2px solid black;
+    border:4px solid black;
     border-radius:7px;
     height: 50px;
     width:50px;
@@ -168,6 +168,11 @@ h1{
     align-items:center;
     justify-content:center;
 
+}
+.chooseletterclose{
+    height:0px;
+    width:0px;
+    border:none
 }
 
 #spinbutt{
