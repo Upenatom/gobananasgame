@@ -28,6 +28,7 @@ let spinButtStatus;
 let letterButtStatus;
 let p1Solve;
 let p2Solve;
+let clear;
 /*---- cached element references ----*/
 const roundEl = document.getElementById("round");
 const instructEl = document.getElementById("instruct");
@@ -43,17 +44,14 @@ const spinnerEl = document.getElementById("spinner");
 const spinButtEl = document.getElementById("spinbutt");
 const themeEl = document.getElementById("theme");
 const spin1El = document.getElementById("spin1");
+const p1winsEl = document.getElementById("p1wins");
+const p2winsEl = document.getElementById("p2wins");
 
 /*---- event listeners ----*/
-// p1SolveEl.addEventListener("keypress");
-// p2SolveEl.addEventListener("keypress");
-// spinButtEl.addEventListener("click");
-// spinButtEl.addEventListener("keypress");
-// lettersEl.addEventListener("click");
+//embedded in functions due to switching listeners off and on based ongame state
 
 init();
 newRound();
-render();
 
 /*---- FUNCTIONS ----*/
 function init() {
@@ -89,16 +87,23 @@ function render() {
   p1PointsEl.textContent = `${player[0].points}`;
   p2PointsEl.textContent = `${player[1].points}`;
   themeEl.textContent = theme;
+  p1winsEl.textContent = `Wins: ${player[0].wins}`;
+  p2winsEl.textContent = `Wins: ${player[1].wins}`;
   lettersEl;
   spin1El.textContent = spinResult;
   spinButtEl;
   buttonState();
 }
 function newRound() {
+  clearBoard();
   round = round + 1;
+  player[0].points = 0;
+  player[1].points = 0;
   word = randomWord(words);
   theme = word[0];
   generateBoards(word);
+  spin1El.textContent = "0";
+  render();
 }
 function generateBoards(selectedWord) {
   let spltword = [];
@@ -184,7 +189,6 @@ function playerSpin() {
     letterButtStatus = true;
     render();
   }
-  console.log(spinResult);
 }
 function checkBoard(letter) {
   //return true if selected character exists
@@ -223,6 +227,8 @@ function checkBoard(letter) {
     switchPlayer();
   } else switchPlayer();
   console.log(trackerArr);
+  console.log(trackerArr.length);
+  roundProgress();
 }
 
 function randomNumberGen(highNum, lowNum) {
@@ -259,4 +265,34 @@ function removeLetter(e) {
   e.target.classList.remove("chooseletter");
   e.target.classList.add("chooseletterclose");
   checkBoard(e.target.id);
+}
+function roundProgress() {
+  if (trackerArr.length === 0) {
+    newRound();
+    if (player[0].points > player[1].points) {
+      player[0].wins = player[0].wins + 1;
+    } else player[1].wins = player[1].wins + 1;
+  }
+}
+function clearBoard() {
+  clear = document.querySelectorAll(".chooseletter");
+  clear.forEach(function (div) {
+    div.remove();
+  });
+  clear = document.querySelectorAll(".chooseletterclose");
+  clear.forEach(function (div) {
+    div.remove();
+  });
+  clear = document.querySelectorAll(".letterContainer");
+  clear.forEach(function (div) {
+    div.remove();
+  });
+  clear = document.querySelectorAll(".guessedletter");
+  clear.forEach(function (div) {
+    div.remove();
+  });
+  clear = document.querySelectorAll(".symbols");
+  clear.forEach(function (div) {
+    div.remove();
+  });
 }

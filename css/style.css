@@ -77,7 +77,13 @@ h1{
     font-size:25px;
     border:1px solid black;
     text-align: center;
-    
+       
+}
+#p1wins, #p2wins{
+    font-family:'NTR', sans-serif;
+    font-size:25px;
+    border:1px solid black;
+    text-align: center;
 }
 #p1points,#p2points{
     font-family: 'Press Start 2P', cursive;
