@@ -30,7 +30,7 @@ h1{
     flex-direction:column;
     border:1px solid black;
     width:900px;
-    height:150px;
+    height:100px;
     align-items: center;
     row-gap:10px;
 }
@@ -44,20 +44,24 @@ h1{
 }
 #instruct{
     width:900px;
-    height:100px;
+    height:50px;
     border:1px solid black;
     text-align:center;
     font-family: 'NTR', sans-serif;
     font-size: 30px;
-    vertical-align:top;
+    display:flex;
+    align-items:center;
+    justify-content: center;
 
 }
 #theme{
     border:1px solid black;
     width:900px;
-    height:auto;
+    height:40px;
     font-family: 'NTR', sans-serif;
     font-size: 40px;
+    display:flex;
+    align-items:center;
     
 }
 .boxcont{
@@ -227,4 +231,18 @@ h1{
     border:1px solid black;
     width:900px;
     height: 125px;
+}
+.winTheme{
+    border-radius:7px;
+    background-image:url("../img/banaDance.gif");
+    background-repeat:no-repeat;
+    height: 250px;
+    width:250px;
+    font-size: 50px;
+    background-color:none;
+    display:flex;
+    align-items:flex-start;
+    align-content:center;
+    justify-content:center;
+
 }
