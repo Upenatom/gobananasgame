@@ -96,6 +96,9 @@ function render() {
 }
 function newRound() {
   clearBoard();
+  render();
+  trackerArr = [];
+  compareCharArr = [];
   round = round + 1;
   player[0].points = 0;
   player[1].points = 0;
@@ -268,10 +271,20 @@ function removeLetter(e) {
 }
 function roundProgress() {
   if (trackerArr.length === 0) {
-    newRound();
     if (player[0].points > player[1].points) {
       player[0].wins = player[0].wins + 1;
     } else player[1].wins = player[1].wins + 1;
+    newRound();
+  } else if (trackerArr.length === 0 && player[0].wins == 2) {
+    instruct = `${player[0]} WINS!!!!!!`;
+    spinButtStatus = false;
+    letterButtStatus = false;
+    buttonState();
+  } else if (trackerArr.length === 0 && player[1].wins == 2) {
+    instruct = `${player[1]} WINS!!!!!!`;
+    spinButtStatus = false;
+    letterButtStatus = false;
+    buttonState();
   }
 }
 function clearBoard() {
@@ -292,6 +305,10 @@ function clearBoard() {
     div.remove();
   });
   clear = document.querySelectorAll(".symbols");
+  clear.forEach(function (div) {
+    div.remove();
+  });
+  clear = document.querySelectorAll(".wordContainer");
   clear.forEach(function (div) {
     div.remove();
   });
