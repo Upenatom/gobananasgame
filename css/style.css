@@ -246,3 +246,14 @@ h1{
     justify-content:center;
 
 }
+.spinwin{
+    font-family: 'Press Start 2P', cursive;
+    border:5px solid silver;
+    background-image: linear-gradient(0deg,rgb(42, 41, 41),grey,white);
+    border-radius:10px;
+    height:80px;
+    width:900px;
+    display:flex;
+    font-size:30px;
+    justify-content:center;
+    align-items: center;}

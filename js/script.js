@@ -45,6 +45,7 @@ let spinResult = 0;
 let spinButtStatus;
 let letterButtStatus;
 let solveButtStatus;
+let spinResButtStatus;
 let winner;
 let solve;
 let clear;
@@ -71,22 +72,23 @@ function buttonState() {
     spinButtEl.addEventListener("click", playerSpin);
   } else spinButtEl.removeEventListener("click", playerSpin);
   if (letterButtStatus === true) {
-    // lettersEl.addEventListener("click", function (e) {
-    //   checkBoard(e.target.id);
-    // });
     lettersEl.addEventListener("click", removeLetter);
   } else if (letterButtStatus === false) {
     lettersEl.removeEventListener("click", removeLetter);
   }
   if (solveButtStatus === true) {
     solveEl.addEventListener("click", switchToSolve);
-  } else if (solveButtStatus === true) {
+  } else if (solveButtStatus === false) {
     solveEl.removeEventListener("click", switchToSolve);
+  }
+  if (spinResButtStatus === true) {
+    spinnerEl.addEventListener("click", init);
+  } else if (solveButtStatus === false) {
+    spinnerEl.removeEventListener("click", init);
   }
 }
 
 init();
-newRound();
 
 /*---- FUNCTIONS ----*/
 function init() {
@@ -94,17 +96,17 @@ function init() {
   player = [
     {
       name: "Player 1",
-      wins: 1,
+      wins: 0,
       points: 0,
     },
     {
       name: "Player 2",
-      wins: 1,
+      wins: 0,
       points: 0,
     },
   ];
   currentPlayer = player[0];
-  instruct = `${currentPlayer.name} press the spin button`;
+  instruct = `${currentPlayer.name} CLICK THE SPIN BUTTON! THE WORD THEME IS BELOW`;
   trackerArr = [];
   compareCharArr = [];
   solve = "SOLVE";
@@ -113,7 +115,12 @@ function init() {
   spinButtStatus = true;
   letterButtStatus = false;
   solveButtStatus = true;
+  spinResButtStatus = false;
   winner = "";
+  spinResult = "LET'S PLAY!!";
+  render();
+  clearBoard();
+  newRound();
 }
 function render() {
   roundEl.textContent = `Round ${round} of ${numOfRounds}`;
@@ -123,8 +130,8 @@ function render() {
   p1PointsEl.textContent = `${player[0].points}`;
   p2PointsEl.textContent = `${player[1].points}`;
   themeEl.textContent = theme;
-  p1winsEl.textContent = `Wins: ${player[0].wins}`;
-  p2winsEl.textContent = `Wins: ${player[1].wins}`;
+  p1winsEl.textContent = `Wins: ${player[0].wins}/2`;
+  p2winsEl.textContent = `Wins: ${player[1].wins}/2`;
   lettersEl;
   spin1El.textContent = spinResult;
   spinButtEl;
@@ -300,8 +307,12 @@ function assignRoundWins() {
   if (trackerArr.length === 0) {
     if (player[0].points > player[1].points) {
       player[0].wins = player[0].wins + 1;
+      newRound();
     } else if (player[0].points < player[1].points) {
       player[1].wins = player[1].wins + 1;
+      newRound();
+    } else if (player[0].wins === 2 || player[1].wins === 2) {
+      return;
     }
   }
 }
@@ -313,6 +324,7 @@ function gameWinLogic() {
     winner = player[0].name;
     buttonState();
     clearBoard();
+    displayWinScreen();
     render();
   } else if (player[1].wins === 2) {
     instruct = `${player[1].name} WINS!!!!!!`;
@@ -323,8 +335,6 @@ function gameWinLogic() {
     clearBoard();
     displayWinScreen();
     render();
-  } else {
-    newRound;
   }
 }
 function clearBoard() {
@@ -352,10 +362,12 @@ function clearBoard() {
   clear.forEach(function (div) {
     div.remove();
   });
-  clear = document.querySelectorAll("winTheme");
+  clear = document.querySelectorAll(".winTheme");
   clear.forEach(function (div) {
     div.remove();
   });
+  spin1El.classList.remove("spinwin");
+  spin1El.classList.add("spin");
 }
 function animatespinner(result) {
   let timer = setInterval(flip, 60);
@@ -390,4 +402,9 @@ function displayWinScreen() {
     banana[i].classList.add("winTheme");
     gameBoardEl.append(banana[i]);
   }
+  spin1El.classList.toggle("spin");
+  spin1El.classList.add("spinwin");
+  spinResult = "PLAY AGAIN? CLICK HERE";
+  spinResButtStatus = true;
+  render();
 }
