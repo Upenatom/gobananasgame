@@ -48,6 +48,10 @@ let solveButtStatus;
 let spinResButtStatus;
 let winner;
 let solve;
+//mode selects between the keyboard on screen in spin
+//mode '0' (stops after first letter is selected) or solve
+//mode '1'(stops only when user gets the wrong letter)
+let mode;
 let clear;
 /*---- cached element references ----*/
 const roundEl = document.getElementById("round");
@@ -76,10 +80,11 @@ function buttonState() {
   } else if (letterButtStatus === false) {
     lettersEl.removeEventListener("click", removeLetter);
   }
+
   if (solveButtStatus === true) {
-    solveEl.addEventListener("click", switchToSolve);
+    solveEl.addEventListener("click", playerSolve);
   } else if (solveButtStatus === false) {
-    solveEl.removeEventListener("click", switchToSolve);
+    solveEl.removeEventListener("click", playerSolve);
   }
   if (spinResButtStatus === true) {
     spinnerEl.addEventListener("click", init);
@@ -106,11 +111,10 @@ function init() {
     },
   ];
   currentPlayer = player[0];
-  instruct = `${currentPlayer.name} CLICK THE SPIN BUTTON! THE WORD THEME IS BELOW`;
+  instruct = `${currentPlayer.name}: CLICK THE SPIN BUTTON! THE WORD THEME IS BELOW`;
   trackerArr = [];
   compareCharArr = [];
   solve = "SOLVE";
-  theme = "The word or phrase hint will appear here";
   spin1El.textContent = "0";
   spinButtStatus = true;
   letterButtStatus = false;
@@ -123,7 +127,7 @@ function init() {
   newRound();
 }
 function render() {
-  roundEl.textContent = `Round ${round} of ${numOfRounds}`;
+  roundEl.textContent = `ROUND ${round} OF ${numOfRounds}`;
   instructEl.textContent = instruct;
   p1NameEl.textContent = player[0].name;
   p2NameEl.textContent = player[1].name;
@@ -137,6 +141,7 @@ function render() {
   spinButtEl;
   buttonState();
 }
+//selects a new word/theme
 function newRound() {
   clearBoard();
   render();
@@ -149,8 +154,11 @@ function newRound() {
   theme = word[0];
   generateBoards(word);
   spin1El.textContent = "0";
+  solveButtStatus = true;
+  spinButtStatus = true;
   render();
 }
+//generatesboard based on new word/theme
 function generateBoards(selectedWord) {
   let spltword = [];
   let wordDivContainer = [];
@@ -209,6 +217,7 @@ function generateBoards(selectedWord) {
     lettersEl.append(letterDivContainer[i]);
   });
 }
+//randomize selection - called by newRound()
 function randomWord(wordArr) {
   let themeIndex = Math.floor(Math.random() * wordArr.length);
   let wordIndex =
@@ -216,7 +225,7 @@ function randomWord(wordArr) {
   //return array that contains [theme,word]
   return [wordArr[themeIndex][0], wordArr[themeIndex][wordIndex]];
 }
-//returns a random element from an array and adjusts player totals
+//Executes when player clicks spin
 function playerSpin() {
   spinResult = spinnerArr[randomNumberGen(spinnerArr.length - 1, 0)];
   animatespinner(spinResult);
@@ -230,20 +239,34 @@ function playerSpin() {
     render();
     switchPlayer();
   } else if (spinResult !== "LOSE TURN" || spinResult !== "LOSE POINTS") {
-    instruct = `${currentPlayer.name}, choose a letter or click solve to solve the puzzle`;
+    instruct = `${currentPlayer.name}: CHOOSE A LETTER`;
     //deactivate spinner button so that player can't spin again.
     //activate letter buttons
     spinButtStatus = false;
     letterButtStatus = true;
+    solveButtStatus = false;
+    mode = 0;
     render();
   }
 }
-function checkBoard(letter) {
+
+//executes whem player clicks Solve
+function playerSolve() {
+  instruct = `${currentPlayer.name} YOU HAVE 10 SECONDS TO SOLVE`;
+  spinButtStatus = false;
+  letterButtStatus = true;
+  solveButtStatus = false;
+  mode = 1;
+  render();
+  console.log(mode);
+}
+//runs check on selected letter in mode 0 or mode 2(continous selection)
+function checkBoard(letter, mode) {
   //return true if selected character exists
   let x = compareCharArr.some(function (char) {
     return char === letter;
   });
-  if (x === true) {
+  if (x === true && mode === 0) {
     letterButtStatus = false;
     buttonState();
     compareCharArr.forEach(function (char, i) {
@@ -275,7 +298,39 @@ function checkBoard(letter) {
     switchPlayer();
     gameWinLogic();
     render();
+  } else if (x === true && mode === 1) {
+    letterButtStatus = true;
+    buttonState();
+    compareCharArr.forEach(function (char, i) {
+      if (char === letter) {
+        currentPlayer.points = currentPlayer.points + parseInt(spinResult);
+        document.getElementById(i).textContent = letter;
+        document.getElementById(i).classList.remove("letterContainer");
+        document.getElementById(i).classList.add("guessedletter");
+      }
+    });
+    //create temp array to copy items over taht aren't the target letter then reassign to tempArr
+    let tempArr = [];
+    trackerArr.forEach(function (char, i) {
+      if (
+        char !== letter &&
+        char !== `'` &&
+        char !== `"` &&
+        char !== "!" &&
+        char !== "?" &&
+        char !== "-"
+      ) {
+        tempArr.push(trackerArr[i]);
+      }
+    });
+    //overwrite trackerArr with tempArr
+    trackerArr = tempArr;
+    //Round Win Check
+    assignRoundWins();
+    gameWinLogic();
+    render();
   } else switchPlayer();
+
   console.log(trackerArr);
   console.log(trackerArr.length);
 }
@@ -286,23 +341,26 @@ function randomNumberGen(highNum, lowNum) {
 function switchPlayer() {
   if (currentPlayer === player[0]) {
     currentPlayer = player[1];
-    instruct = `${player[1].name} Hit the SPIN IT!! or click SOLVE`;
+    instruct = `${player[1].name} CLICK THE SPIN IT!! OR CLICK SOLVE`;
     spinButtStatus = true;
     letterButtStatus = false;
+    solveButtStatus = true;
+    render();
   } else if (currentPlayer === player[1]) {
     currentPlayer = player[0];
-    instruct = `${player[0].name} Hit the SPIN IT!! <spacebar> or click SOLVE <z>`;
+    instruct = `${player[0].name} CLICK THE SPIN IT!! OR CLICK SOLVE`;
     spinButtStatus = true;
     letterButtStatus = false;
+    solveButtStatus = true;
+    render();
   }
-  render();
 }
-function switchToSolve() {}
 function removeLetter(e) {
   e.target.classList.remove("chooseletter");
   e.target.classList.add("chooseletterclose");
-  checkBoard(e.target.id);
+  checkBoard(e.target.id, mode);
 }
+
 function assignRoundWins() {
   if (trackerArr.length === 0) {
     if (player[0].points > player[1].points) {
@@ -322,7 +380,7 @@ function gameWinLogic() {
     spinButtStatus = false;
     letterButtStatus = false;
     winner = player[0].name;
-    buttonState();
+    // buttonState();
     clearBoard();
     displayWinScreen();
     render();
@@ -331,7 +389,7 @@ function gameWinLogic() {
     spinButtStatus = false;
     letterButtStatus = false;
     winner = player[1].name;
-    buttonState();
+    // buttonState();
     clearBoard();
     displayWinScreen();
     render();
