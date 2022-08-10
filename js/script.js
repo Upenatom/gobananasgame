@@ -26,8 +26,8 @@ let currentPlayer;
 let spinResult = 0;
 let spinButtStatus;
 let letterButtStatus;
-let p1Solve;
-let p2Solve;
+let solveButtStatus;
+let solve;
 let clear;
 /*---- cached element references ----*/
 const roundEl = document.getElementById("round");
@@ -36,8 +36,7 @@ const p1NameEl = document.getElementById("p1name");
 const p2NameEl = document.getElementById("p2name");
 const p1PointsEl = document.getElementById("p1points");
 const p2PointsEl = document.getElementById("p2points");
-const p1SolveEl = document.getElementById("p1solve");
-const p2SolveEl = document.getElementById("p2solve");
+const solveEl = document.getElementById("solve");
 const gameBoardEl = document.getElementById("gameboard");
 const lettersEl = document.getElementById("letters");
 const spinnerEl = document.getElementById("spinner");
@@ -72,12 +71,12 @@ function init() {
   instruct = `${currentPlayer.name} press the spin button`;
   trackerArr = [];
   compareCharArr = [];
-  p1Solve = "SOLVE";
-  p2Solve = "SOLVE";
+  solve = "SOLVE";
   theme = "The word or phrase hint will appear here";
   spin1El.textContent = "0";
   spinButtStatus = true;
   letterButtStatus = false;
+  solveButtStatus = true;
 }
 function render() {
   roundEl.textContent = `Round ${round} of ${numOfRounds}`;
@@ -176,6 +175,8 @@ function randomWord(wordArr) {
 //returns a random element from an array and adjusts player totals
 function playerSpin() {
   spinResult = spinnerArr[randomNumberGen(spinnerArr.length - 1, 0)];
+  animatespinner(spinResult);
+  console.log(spinResult);
   render();
   if (spinResult === "LOSE TURN") {
     render();
@@ -231,7 +232,7 @@ function checkBoard(letter) {
   } else switchPlayer();
   console.log(trackerArr);
   console.log(trackerArr.length);
-  roundProgress();
+  winLogic();
 }
 
 function randomNumberGen(highNum, lowNum) {
@@ -263,24 +264,33 @@ function buttonState() {
   } else if (letterButtStatus === false) {
     lettersEl.removeEventListener("click", removeLetter);
   }
+  if (solveButtStatus === true) {
+    solveEl.addEventListener("click", switchToSolve);
+  } else if (solveButtStatus === true) {
+    solveEl.removeEventListener("click", switchToSolve);
+  }
 }
+function switchToSolve() {}
 function removeLetter(e) {
   e.target.classList.remove("chooseletter");
   e.target.classList.add("chooseletterclose");
   checkBoard(e.target.id);
 }
-function roundProgress() {
-  if (trackerArr.length === 0) {
+function winLogic() {
+  if (trackerArr.length === 0 && (player[0].wins < 2 || player[1].wins < 2)) {
     if (player[0].points > player[1].points) {
       player[0].wins = player[0].wins + 1;
-    } else player[1].wins = player[1].wins + 1;
-    newRound();
-  } else if (trackerArr.length === 0 && player[0].wins == 2) {
+      newRound();
+    } else if (player[0].points < player[1].points) {
+      player[1].wins = player[1].wins + 1;
+      newRound();
+    }
+  } else if (trackerArr.length === 0 && player[0].wins === 2) {
     instruct = `${player[0]} WINS!!!!!!`;
     spinButtStatus = false;
     letterButtStatus = false;
     buttonState();
-  } else if (trackerArr.length === 0 && player[1].wins == 2) {
+  } else if (trackerArr.length === 0 && player[1].wins === 2) {
     instruct = `${player[1]} WINS!!!!!!`;
     spinButtStatus = false;
     letterButtStatus = false;
@@ -312,4 +322,23 @@ function clearBoard() {
   clear.forEach(function (div) {
     div.remove();
   });
+}
+function animatespinner(result) {
+  let timer = setInterval(flip, 60);
+  let i = 0;
+  let count = 0;
+  function flip() {
+    spin1El.textContent = spinnerArr[i];
+    if (count === 20) {
+      clearInterval(timer);
+      spin1El.textContent = result;
+    } else {
+      i++;
+      count++;
+      if (i === 8) {
+        i = 0;
+      }
+      console.log(count);
+    }
+  }
 }
