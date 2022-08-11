@@ -28,7 +28,7 @@ const spinnerArr = [
   "350",
   "500",
   "LOSE TURN",
-  "LOSE POINTS",
+  "LOSE BANANAS",
 ];
 const numOfRounds = 3;
 const timerSolvePuzz = 1000;
@@ -48,16 +48,16 @@ let letterButtStatus;
 let solveButtStatus;
 let spinResButtStatus;
 let winner;
-let solve;
 //mode selects between the keyboard on screen in spin
 //mode '0' (stops after first letter is selected) or solve
 //mode '1'(stops only when user gets the wrong letter)
 let mode;
 let clear;
-let solveTimer;
 let solveTimerDisplay;
 let stopTimer;
+
 /*---- cached element references ----*/
+
 const roundEl = document.getElementById("round");
 const instructEl = document.getElementById("instruct");
 const p1NameEl = document.getElementById("p1name");
@@ -70,11 +70,9 @@ const lettersEl = document.getElementById("letters");
 const spinnerEl = document.getElementById("spinner");
 const spinButtEl = document.getElementById("spinbutt");
 const themeEl = document.getElementById("theme");
-const spin1El = document.getElementById("spin1");
+const spin1El = document.querySelector(".spin");
 const p1winsEl = document.getElementById("p1wins");
 const p2winsEl = document.getElementById("p2wins");
-const boxcont1El = document.getElementById("boxcont1");
-const boxcont2El = document.getElementById("boxcont2");
 
 /*---- event listeners ----*/
 function buttonState() {
@@ -117,23 +115,22 @@ function init() {
     },
   ];
   currentPlayer = player[0];
-  instruct = `${currentPlayer.name}: CLICK THE SPIN BUTTON! THE WORD THEME IS BELOW`;
+  instruct = `GAME PROMPTS WILL BE DISPLAYED HERE`;
+  theme = "THE THEME OR HINT WILL BE DISPLAYED HERE.";
   trackerArr = [];
   compareCharArr = [];
-  solve = "SOLVE";
   spin1El.textContent = "0";
-  spinButtStatus = true;
+  spinButtStatus = false;
   letterButtStatus = false;
-  solveButtStatus = true;
+  solveButtStatus = false;
   spinResButtStatus = false;
   winner = "";
   spinResult = "LET'S PLAY!";
-  solveTimer = [];
   solveTimerDisplay = [];
   stopTimer = true;
   render();
   clearBoard();
-  newRound();
+  enterName();
 }
 function render() {
   roundEl.textContent = `ROUND ${round} OF ${numOfRounds}`;
@@ -218,9 +215,9 @@ function generateBoards(selectedWord) {
     }
     //create array with charcters AND spaces for comparing
   }
-  // generate letters to choose from and add to letters container
+  // generate keyboard letters to choose from and add to letters container
   lettersArray.forEach(function (letter, i) {
-    letterDivContainer[i] = document.createElement("div");
+    letterDivContainer[i] = document.createElement("button");
     letterDivContainer[i].id = letter;
     letterDivContainer[i].textContent = letter;
     letterDivContainer[i].classList.add("chooseletter");
@@ -243,11 +240,11 @@ function playerSpin() {
   if (spinResult === "LOSE TURN") {
     render();
     switchPlayer();
-  } else if (spinResult === "LOSE POINTS") {
+  } else if (spinResult === "LOSE BANANAS") {
     currentPlayer.points = 0;
     render();
     switchPlayer();
-  } else if (spinResult !== "LOSE TURN" || spinResult !== "LOSE POINTS") {
+  } else if (spinResult !== "LOSE TURN" || spinResult !== "LOSE BANANAS") {
     instruct = `${currentPlayer.name}: CHOOSE A LETTER`;
     //deactivate spinner button so that player can't spin again.
     //activate letter buttons
@@ -299,7 +296,9 @@ function checkBoard(letter, mode) {
         char !== `"` &&
         char !== "!" &&
         char !== "?" &&
-        char !== "-"
+        char !== "-" &&
+        char !== "." &&
+        char !== ":"
       ) {
         tempArr.push(trackerArr[i]);
       }
@@ -334,7 +333,8 @@ function checkBoard(letter, mode) {
         char !== "!" &&
         char !== "?" &&
         char !== "-" &&
-        char !== "."
+        char !== "." &&
+        char !== ":"
       ) {
         tempArr.push(trackerArr[i]);
       }
@@ -373,18 +373,22 @@ function switchPlayer() {
   }
 }
 function removeLetter(e) {
-  e.target.classList.remove("chooseletter");
-  e.target.classList.add("chooseletterclose");
+  e.target.remove();
   checkBoard(e.target.id, mode);
 }
 
 function assignRoundWins() {
   if (trackerArr.length === 0) {
+    stopTimer = true;
     if (player[0].points > player[1].points) {
+      instruct = `${player[0]} WINS ROUND ${round}`;
       player[0].wins = player[0].wins + 1;
+      render();
       newRound();
     } else if (player[0].points < player[1].points) {
+      instruct = `${player[1]} WINS ROUND ${round}`;
       player[1].wins = player[1].wins + 1;
+      render();
       newRound();
     } else if (player[0].wins === 2 || player[1].wins === 2) {
       return;
@@ -393,26 +397,24 @@ function assignRoundWins() {
 }
 function gameWinLogic() {
   if (player[0].wins === 2) {
-    instruct = `${player[0].name} WINS!!!!!!`;
+    instruct = `${player[0].name} WINS THE GAME!!!!!!`;
     spinButtStatus = false;
     letterButtStatus = false;
     winner = player[0].name;
-    theme = `${player[1].name} WINS!!!!!!`;
+    theme = `${player[0].name} WINS THE GAME!!!!!!`;
     // buttonState();
     clearBoard();
     displayWinScreen();
-    render();
   } else if (player[1].wins === 2) {
-    instruct = `${player[1].name} WINS!!!!!!`;
+    instruct = `${player[1].name} WINS THE GAME!!!!!!`;
     spinButtStatus = false;
     letterButtStatus = false;
     winner = player[1].name;
     round = round - 1;
-    theme = `${player[1].name} WINS!!!!!!`;
+    theme = `${player[1].name} WINS THE GAME!!!!!!`;
     // buttonState();
     clearBoard();
     displayWinScreen();
-    render();
   }
 }
 function clearBoard() {
@@ -444,6 +446,10 @@ function clearBoard() {
   clear.forEach(function (div) {
     div.remove();
   });
+  clear = document.querySelectorAll(".inputField");
+  clear.forEach(function (div) {
+    div.remove();
+  });
   spin1El.classList.remove("spinwin");
   spin1El.classList.add("spin");
 }
@@ -464,10 +470,9 @@ function displayWinScreen() {
     gameBoardEl.append(banana[i]);
   }
   spin1El.classList.toggle("spin");
-  spin1El.classList.add("spinwin");
   spinResult = "PLAY AGAIN? CLICK HERE!";
+  spin1El.classList.add("spinwin");
   spinResButtStatus = true;
-  render();
 }
 function animatespinner(result) {
   let timer = setInterval(flip, 60);
@@ -489,7 +494,7 @@ function animatespinner(result) {
 }
 function startSolveTimer(deltaT, bigNum) {
   stopTimer = false;
-  //create array for display purposes during countdown
+  //create array for display with elements to display during countdown
   for (let j = bigNum; j > 0; j--) {
     solveTimerDisplay[j] = j;
   }
@@ -500,15 +505,54 @@ function startSolveTimer(deltaT, bigNum) {
     //display timer per frame
     spin1El.textContent = `Timer: ${solveTimerDisplay[j]}s. ${
       timerPenalty * j
-    } Points`;
+    } Bananas`;
     //subtract points from player
     currentPlayer.points = currentPlayer.points - 10;
+    if (currentPlayer.points < 0) {
+      currentPlayer.points = 0;
+    }
     //stop timer condition added to stop timer when player selects wrong letter
     if (j === 0 || stopTimer === true) {
       clearInterval(timer);
+      spin1El.style.fontSize = "75px";
       switchPlayer();
     } else {
       j--;
     }
   }
+}
+function enterName() {
+  clearBoard();
+  //Dynamically Create input elements and prompts
+  let enterNameEl = document.createElement("div");
+  enterNameEl.classList.add("inputField");
+  enterNameEl.textContent = "ENTER PLAYER NAMES AND CLICK START:";
+  gameBoardEl.append(enterNameEl);
+  let nameInputPl1EL = document.createElement("input");
+  nameInputPl1EL.classList.add("inputField");
+  nameInputPl1EL.setAttribute("type", "text");
+  nameInputPl1EL.style.backgroundColor = "#eee8aa";
+  nameInputPl1EL.setAttribute("maxlength", "8");
+  gameBoardEl.append(nameInputPl1EL);
+  nameInputPl1EL.value = player[0].name;
+  let nameInputPl2EL = document.createElement("input");
+  nameInputPl2EL.classList.add("inputField");
+  nameInputPl2EL.setAttribute("type", "text");
+  nameInputPl2EL.style.backgroundColor = "#eee8aa";
+  nameInputPl1EL.setAttribute("maxlength", "8");
+  gameBoardEl.append(nameInputPl2EL);
+  nameInputPl2EL.value = player[1].name;
+  let submitButtEl = document.createElement("button");
+  submitButtEl.textContent = "START";
+  submitButtEl.classList.add("inputField");
+  gameBoardEl.append(submitButtEl);
+  gameBoardEl.style.flexDirection = "column";
+  //event listener for submit player buttons
+  submitButtEl.addEventListener("click", function () {
+    player[0].name = nameInputPl1EL.value.toUpperCase();
+    player[1].name = nameInputPl2EL.value.toUpperCase();
+    gameBoardEl.style.flexDirection = "row";
+    clearBoard();
+    newRound();
+  });
 }
