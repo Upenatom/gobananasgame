@@ -31,7 +31,8 @@ const spinnerArr = [
   "LOSE POINTS",
 ];
 const numOfRounds = 3;
-const timerSolvePuzz = 1000; //
+const timerSolvePuzz = 1000;
+const timerPenalty = -10;
 /*---- app's state (variables) ----*/
 let round;
 let player;
@@ -55,6 +56,7 @@ let mode;
 let clear;
 let solveTimer;
 let solveTimerDisplay;
+let stopTimer;
 /*---- cached element references ----*/
 const roundEl = document.getElementById("round");
 const instructEl = document.getElementById("instruct");
@@ -128,6 +130,7 @@ function init() {
   spinResult = "LET'S PLAY!";
   solveTimer = [];
   solveTimerDisplay = [];
+  stopTimer = true;
   render();
   clearBoard();
   newRound();
@@ -258,7 +261,7 @@ function playerSpin() {
 
 //executes whem player clicks Solve
 function playerSolve() {
-  instruct = `${currentPlayer.name} YOU HAVE 10 SECONDS TO SOLVE. -10 POINTS EVERY SECOND`;
+  instruct = `${currentPlayer.name} YOU HAVE 10 SECONDS TO SOLVE. ${timerPenalty} POINTS EVERY SECOND`;
   spinButtStatus = false;
   letterButtStatus = true;
   solveButtStatus = false;
@@ -357,6 +360,7 @@ function switchPlayer() {
     spinButtStatus = true;
     letterButtStatus = false;
     solveButtStatus = true;
+    stopTimer = true;
     render();
   } else if (currentPlayer === player[1]) {
     currentPlayer = player[0];
@@ -364,6 +368,7 @@ function switchPlayer() {
     spinButtStatus = true;
     letterButtStatus = false;
     solveButtStatus = true;
+    stopTimer = true;
     render();
   }
 }
@@ -483,15 +488,23 @@ function animatespinner(result) {
   }
 }
 function startSolveTimer(deltaT, bigNum) {
+  stopTimer = false;
   //create array for display purposes during countdown
   for (let j = bigNum; j > 0; j--) {
     solveTimerDisplay[j] = j;
   }
   let timer = setInterval(countDwn, deltaT);
   let j = bigNum;
+  spin1El.style.fontSize = "25px";
   function countDwn() {
-    spin1El.textContent = `Timer: ${solveTimerDisplay[j]}`;
-    if (j === 0) {
+    //display timer per frame
+    spin1El.textContent = `Timer: ${solveTimerDisplay[j]}s. ${
+      timerPenalty * j
+    } Points`;
+    //subtract points from player
+    currentPlayer.points = currentPlayer.points - 10;
+    //stop timer condition added to stop timer when player selects wrong letter
+    if (j === 0 || stopTimer === true) {
       clearInterval(timer);
       switchPlayer();
     } else {
