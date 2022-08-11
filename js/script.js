@@ -31,7 +31,7 @@ const spinnerArr = [
   "LOSE POINTS",
 ];
 const numOfRounds = 3;
-const timerSolvePuzz = 500; //500ms
+const timerSolvePuzz = 1000; //
 /*---- app's state (variables) ----*/
 let round;
 let player;
@@ -53,6 +53,8 @@ let solve;
 //mode '1'(stops only when user gets the wrong letter)
 let mode;
 let clear;
+let solveTimer;
+let solveTimerDisplay;
 /*---- cached element references ----*/
 const roundEl = document.getElementById("round");
 const instructEl = document.getElementById("instruct");
@@ -69,6 +71,8 @@ const themeEl = document.getElementById("theme");
 const spin1El = document.getElementById("spin1");
 const p1winsEl = document.getElementById("p1wins");
 const p2winsEl = document.getElementById("p2wins");
+const boxcont1El = document.getElementById("boxcont1");
+const boxcont2El = document.getElementById("boxcont2");
 
 /*---- event listeners ----*/
 function buttonState() {
@@ -121,7 +125,9 @@ function init() {
   solveButtStatus = true;
   spinResButtStatus = false;
   winner = "";
-  spinResult = "LET'S PLAY!!";
+  spinResult = "LET'S PLAY!";
+  solveTimer = [];
+  solveTimerDisplay = [];
   render();
   clearBoard();
   newRound();
@@ -156,6 +162,7 @@ function newRound() {
   spin1El.textContent = "0";
   solveButtStatus = true;
   spinButtStatus = true;
+  instruct = `${currentPlayer.name} CHOOSE THE SPIN OR SOLVE BUTTON`;
   render();
 }
 //generatesboard based on new word/theme
@@ -230,7 +237,6 @@ function playerSpin() {
   spinResult = spinnerArr[randomNumberGen(spinnerArr.length - 1, 0)];
   animatespinner(spinResult);
   console.log(spinResult);
-  render();
   if (spinResult === "LOSE TURN") {
     render();
     switchPlayer();
@@ -252,24 +258,28 @@ function playerSpin() {
 
 //executes whem player clicks Solve
 function playerSolve() {
-  instruct = `${currentPlayer.name} YOU HAVE 10 SECONDS TO SOLVE`;
+  instruct = `${currentPlayer.name} YOU HAVE 10 SECONDS TO SOLVE. -10 POINTS EVERY SECOND`;
   spinButtStatus = false;
   letterButtStatus = true;
   solveButtStatus = false;
   mode = 1;
   render();
+  startSolveTimer(timerSolvePuzz, 10);
+
   console.log(mode);
 }
-//runs check on selected letter in mode 0 or mode 2(continous selection)
+//runs check on selected letter in mode 0 or mode 2 when letter is clicked(continous selection)
 function checkBoard(letter, mode) {
   //return true if selected character exists
   let x = compareCharArr.some(function (char) {
     return char === letter;
   });
+  //SPIN MODE (MODE 0)
   if (x === true && mode === 0) {
     letterButtStatus = false;
     buttonState();
     compareCharArr.forEach(function (char, i) {
+      //remove letters from keyboard area
       if (char === letter) {
         currentPlayer.points = currentPlayer.points + parseInt(spinResult);
         document.getElementById(i).textContent = letter;
@@ -298,18 +308,20 @@ function checkBoard(letter, mode) {
     switchPlayer();
     gameWinLogic();
     render();
-  } else if (x === true && mode === 1) {
+  }
+  //SOLVE MODE (MODE 1)
+  else if (mode === 1 && x === true) {
     letterButtStatus = true;
-    buttonState();
+    // buttonState();
     compareCharArr.forEach(function (char, i) {
+      //remove letters from keyboard area as they are selected
       if (char === letter) {
-        currentPlayer.points = currentPlayer.points + parseInt(spinResult);
         document.getElementById(i).textContent = letter;
         document.getElementById(i).classList.remove("letterContainer");
         document.getElementById(i).classList.add("guessedletter");
       }
     });
-    //create temp array to copy items over taht aren't the target letter then reassign to tempArr
+    //create temp array to copy items over that aren't the target letter then reassign to tempArr
     let tempArr = [];
     trackerArr.forEach(function (char, i) {
       if (
@@ -318,7 +330,8 @@ function checkBoard(letter, mode) {
         char !== `"` &&
         char !== "!" &&
         char !== "?" &&
-        char !== "-"
+        char !== "-" &&
+        char !== "."
       ) {
         tempArr.push(trackerArr[i]);
       }
@@ -328,9 +341,8 @@ function checkBoard(letter, mode) {
     //Round Win Check
     assignRoundWins();
     gameWinLogic();
-    render();
+    // render();
   } else switchPlayer();
-
   console.log(trackerArr);
   console.log(trackerArr.length);
 }
@@ -380,6 +392,7 @@ function gameWinLogic() {
     spinButtStatus = false;
     letterButtStatus = false;
     winner = player[0].name;
+    theme = `${player[1].name} WINS!!!!!!`;
     // buttonState();
     clearBoard();
     displayWinScreen();
@@ -389,6 +402,8 @@ function gameWinLogic() {
     spinButtStatus = false;
     letterButtStatus = false;
     winner = player[1].name;
+    round = round - 1;
+    theme = `${player[1].name} WINS!!!!!!`;
     // buttonState();
     clearBoard();
     displayWinScreen();
@@ -427,6 +442,28 @@ function clearBoard() {
   spin1El.classList.remove("spinwin");
   spin1El.classList.add("spin");
 }
+
+function displayWinScreen() {
+  let cong = [];
+  let banana = [];
+  congrats.forEach(function (letter, i) {
+    cong[i] = document.createElement("div");
+    cong[i].id = letter;
+    cong[i].textContent = letter;
+    cong[i].classList.add("chooseletter");
+    lettersEl.append(cong[i]);
+  });
+  for (let i = 0; i < 3; i++) {
+    banana[i] = document.createElement("div");
+    banana[i].classList.add("winTheme");
+    gameBoardEl.append(banana[i]);
+  }
+  spin1El.classList.toggle("spin");
+  spin1El.classList.add("spinwin");
+  spinResult = "PLAY AGAIN? CLICK HERE!";
+  spinResButtStatus = true;
+  render();
+}
 function animatespinner(result) {
   let timer = setInterval(flip, 60);
   let i = 0;
@@ -445,24 +482,20 @@ function animatespinner(result) {
     }
   }
 }
-function displayWinScreen() {
-  let cong = [];
-  let banana = [];
-  congrats.forEach(function (letter, i) {
-    cong[i] = document.createElement("div");
-    cong[i].id = letter;
-    cong[i].textContent = letter;
-    cong[i].classList.add("chooseletter");
-    lettersEl.append(cong[i]);
-  });
-  for (let i = 0; i < 3; i++) {
-    banana[i] = document.createElement("div");
-    banana[i].classList.add("winTheme");
-    gameBoardEl.append(banana[i]);
+function startSolveTimer(deltaT, bigNum) {
+  //create array for display purposes during countdown
+  for (let j = bigNum; j > 0; j--) {
+    solveTimerDisplay[j] = j;
   }
-  spin1El.classList.toggle("spin");
-  spin1El.classList.add("spinwin");
-  spinResult = "PLAY AGAIN? CLICK HERE";
-  spinResButtStatus = true;
-  render();
+  let timer = setInterval(countDwn, deltaT);
+  let j = bigNum;
+  function countDwn() {
+    spin1El.textContent = `Timer: ${solveTimerDisplay[j]}`;
+    if (j === 0) {
+      clearInterval(timer);
+      switchPlayer();
+    } else {
+      j--;
+    }
+  }
 }
