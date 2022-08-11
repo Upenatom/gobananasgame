@@ -1,11 +1,11 @@
-# GO BANANAS
+![GO BANANAS Start Screen](https://i.imgur.com/zftYv1l.png)
 
 ## A Browser Based Game
 
 ### Overview
 
-**_GO BANANAS!!!_** is a two player browser based game. Each players objective is to collect as many bananas as the opponent by guessing letters in a word puzzle and choosing between solving the puzzle or spinning the banana spinner.  
-**Go Bananas!!** was developed in 2022 by a software engineering student who wanted to break the record for saying the word 'banana' while presenting the game to his peers.
+**_GO BANANAS!!!!_** is a two player browser based game. Each players objective is to collect as many bananas as the opponent by guessing letters in a word puzzle and choosing between solving the puzzle or spinning the banana spinner.  
+**GO BANANAS!!!!** was developed in 2022 by a software engineering student who wanted to break the record for saying the word 'banana' while presenting the game to his peers.
 
 ---
 
@@ -13,9 +13,18 @@
 
 ---
 
+![GO BANANAS Start Screen](https://i.imgur.com/GYZiJfD.png)
+![GO BANANAS normal play](https://i.imgur.com/rYCP744.png)
+![GO BANANAS Solve Timer](https://i.imgur.com/AO2B4Ax.png)
+![GO BANANAS lost bananas](https://i.imgur.com/rYCP744.png)
+
+---
+
 ### The Game Screen
 
 ---
+
+![GO BANANAS screen description](https://i.imgur.com/7Wofrfu.png)
 
 The game screen contains of the following components:
 
@@ -35,21 +44,25 @@ The game screen contains of the following components:
 - **Spin Button** - When a player clicks this button the Bannana Spinner spins
 - **Solve It Button** - When the player cliks this button a timer is started taht counts down from 10 seconds taking away 10 bananas from the players total bananas earned until either the word is guessed or the player guesses a wrong letter.
 
+---
+
 ### Technologies Used
 
 ---
 
-**Go Bananas!!!** was developed using:
+**Go Bananas!!!!** was developed using:
 
 - Javascript
 - HTML
 - CSS
 
+---
+
 ### Getting Started
 
 ---
 
-**Go Bananas!!!** is playble by clicking on this link: **GO BANANAS!!**
+**Go Bananas!!!!** is playble by clicking on this link: **GO BANANAS!!!!**
 
 The flow of the game is as follows. After the game board is generated and both players have entered their name on the launch page:
 
@@ -60,6 +73,8 @@ The flow of the game is as follows. After the game board is generated and both p
    - The player guesses incorectly, no bananas are awarded and the letter is taken off the keyboard. It is now Player 2's turn.
 4. We fast forward a few turns and go to Player 2. Player 2 has a lead over player one. They do not want to risk spinning banana spinner and losing all their bananas. They are confident they can guess the remaining letters in a short amount of time. The risk of losing a maximum of 100 bananas is worth it over losing all their bananas. Player 2 chooses "SOLVE IT" and clicks the letters they believe will complete the phrase on the game board. Success! All remaining letters are guessed correctly. It only took 4 seconds so in total PLayer 2 only lost 40 bananas but they shut the round down securing their win.
 5. The game then moves to the next round (best of 3), until a final round is played and the ultimate winner is decided.
+
+---
 
 ### Next Steps
 
