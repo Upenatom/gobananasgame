@@ -4,8 +4,9 @@
 
 ### Overview
 
-**_GO BANANAS!!!!_** is a two player browser based game. Each players objective is to collect as many bananas as the opponent by guessing letters in a word puzzle and choosing between solving the puzzle or spinning the banana spinner.  
-**GO BANANAS!!!!** was developed in 2022 by a software engineering student who wanted to break the record for saying the word 'banana' while presenting the game to his peers.
+**_GO BANANAS!!!!_** is a two player browser based game. Each players objective is to collect as many bananas as the opponent by guessing letters in a word puzzle and choosing between solving the puzzle or spinning the banana spinner.
+
+> **GO BANANAS!!!!** was developed in 2022 by a software engineering student who wanted >to see how many times he could say 'banana' while presenting the game to his peers.
 
 ---
 
@@ -63,7 +64,7 @@ The game screen contains of the following components:
 
 ---
 
-**Go Bananas!!!!** is playble by clicking on this link: **GO BANANAS!!!!**
+**Go Bananas!!!!** is playble by clicking on this link: **[GO BANANAS!!!!](https://upenatom.github.io/gobananasgame/)**
 
 The flow of the game is as follows. After the game board is generated and both players have entered their name on the launch page:
 
