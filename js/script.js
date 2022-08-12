@@ -33,6 +33,8 @@ const spinnerArr = [
 const numOfRounds = 3;
 const timerSolvePuzz = 1000;
 const timerPenalty = -10;
+const timerSound = new Audio("../sound/timer.mp3");
+const spinSound = new Audio("../sound/spin.mp3");
 /*---- app's state (variables) ----*/
 let round;
 let player;
@@ -75,7 +77,7 @@ const p1winsEl = document.getElementById("p1wins");
 const p2winsEl = document.getElementById("p2wins");
 
 /*---- event listeners ----*/
-function buttonState() {
+function changeButtonState() {
   if (spinButtStatus === true) {
     spinButtEl.addEventListener("click", playerSpin);
   } else spinButtEl.removeEventListener("click", playerSpin);
@@ -145,7 +147,7 @@ function render() {
   lettersEl;
   spin1El.textContent = spinResult;
   spinButtEl;
-  buttonState();
+  changeButtonState();
 }
 //selects a new word/theme
 function newRound() {
@@ -175,12 +177,11 @@ function generateBoards(selectedWord) {
   let count = 0;
   //split phrase into array of words: [word,word,word]
   spltphrase = selectedWord[1].split(" ");
-  console.log(spltphrase);
+  console.log(word);
   //split into array of array of characters:[['a','b','c'],['d','f',c],['y','t','a']]
   spltphrase.forEach((word, i) => {
     spltword[i] = word.split("");
   });
-  // console.log(spltword);
   //create div containers for word characters
   for (let i = 0; i < spltphrase.length; i++) {
     wordDivContainer[i] = document.createElement("div");
@@ -236,7 +237,6 @@ function randomWord(wordArr) {
 function playerSpin() {
   spinResult = spinnerArr[randomNumberGen(spinnerArr.length - 1, 0)];
   animatespinner(spinResult);
-  console.log(spinResult);
   if (spinResult === "LOSE TURN") {
     render();
     switchPlayer();
@@ -255,7 +255,6 @@ function playerSpin() {
     render();
   }
 }
-
 //executes whem player clicks Solve
 function playerSolve() {
   instruct = `${currentPlayer.name} YOU HAVE 10 SECONDS TO SOLVE. ${timerPenalty} POINTS EVERY SECOND`;
@@ -264,11 +263,10 @@ function playerSolve() {
   solveButtStatus = false;
   mode = 1;
   render();
-  startSolveTimer(timerSolvePuzz, 10);
-
-  console.log(mode);
+  startSolveTimer(timerSolvePuzz, 9);
 }
 //runs check on selected letter in mode 0 or mode 2 when letter is clicked(continous selection)
+//letter is the target id of the keyboard letter clicked
 function checkBoard(letter, mode) {
   //return true if selected character exists
   let x = compareCharArr.some(function (char) {
@@ -277,7 +275,7 @@ function checkBoard(letter, mode) {
   //SPIN MODE (MODE 0)
   if (x === true && mode === 0) {
     letterButtStatus = false;
-    buttonState();
+    changeButtonState();
     compareCharArr.forEach(function (char, i) {
       //remove letters from keyboard area
       if (char === letter) {
@@ -314,9 +312,7 @@ function checkBoard(letter, mode) {
   //SOLVE MODE (MODE 1)
   else if (mode === 1 && x === true) {
     letterButtStatus = true;
-    // buttonState();
     compareCharArr.forEach(function (char, i) {
-      //remove letters from keyboard area as they are selected
       if (char === letter) {
         document.getElementById(i).textContent = letter;
         document.getElementById(i).classList.remove("letterContainer");
@@ -344,12 +340,10 @@ function checkBoard(letter, mode) {
     //Round Win Check
     assignRoundWins();
     gameWinLogic();
-    // render();
   } else switchPlayer();
   console.log(trackerArr);
   console.log(trackerArr.length);
 }
-
 function randomNumberGen(highNum, lowNum) {
   return Math.floor(Math.random() * (highNum - lowNum + 1)) + lowNum;
 }
@@ -376,7 +370,6 @@ function removeLetter(e) {
   e.target.remove();
   checkBoard(e.target.id, mode);
 }
-
 function assignRoundWins() {
   if (trackerArr.length === 0) {
     stopTimer = true;
@@ -402,9 +395,9 @@ function gameWinLogic() {
     letterButtStatus = false;
     winner = player[0].name;
     theme = `${player[0].name} WINS THE GAME!!!!!!`;
-    // buttonState();
     clearBoard();
     displayWinScreen();
+    render();
   } else if (player[1].wins === 2) {
     instruct = `${player[1].name} WINS THE GAME!!!!!!`;
     spinButtStatus = false;
@@ -412,9 +405,9 @@ function gameWinLogic() {
     winner = player[1].name;
     round = round - 1;
     theme = `${player[1].name} WINS THE GAME!!!!!!`;
-    // buttonState();
     clearBoard();
     displayWinScreen();
+    render();
   }
 }
 function clearBoard() {
@@ -453,7 +446,6 @@ function clearBoard() {
   spin1El.classList.remove("spinwin");
   spin1El.classList.add("spin");
 }
-
 function displayWinScreen() {
   let cong = [];
   let banana = [];
@@ -469,18 +461,21 @@ function displayWinScreen() {
     banana[i].classList.add("winTheme");
     gameBoardEl.append(banana[i]);
   }
-  spin1El.classList.toggle("spin");
-  spinResult = "PLAY AGAIN? CLICK HERE!";
+  spin1El.classList.remove("spin");
   spin1El.classList.add("spinwin");
+  spinResult = "PLAY AGAIN? CLICK HERE!";
   spinResButtStatus = true;
+  spinButtStatus = false;
 }
 function animatespinner(result) {
+  soundPlay(spinSound);
   let timer = setInterval(flip, 60);
   let i = 0;
   let count = 0;
   function flip() {
     spin1El.textContent = spinnerArr[i];
     if (count === 20) {
+      soundStop(spinSound);
       clearInterval(timer);
       spin1El.textContent = result;
     } else {
@@ -495,27 +490,33 @@ function animatespinner(result) {
 function startSolveTimer(deltaT, bigNum) {
   stopTimer = false;
   //create array for display with elements to display during countdown
+  timerPlay(timerSound);
   for (let j = bigNum; j > 0; j--) {
     solveTimerDisplay[j] = j;
   }
+  let i = 0;
   let timer = setInterval(countDwn, deltaT);
   let j = bigNum;
-  spin1El.style.fontSize = "25px";
+  spin1El.classList.remove("spin");
+  spin1El.classList.add("spinwin");
   function countDwn() {
+    i++;
     //display timer per frame
     spin1El.textContent = `Timer: ${solveTimerDisplay[j]}s. ${
-      timerPenalty * j
+      timerPenalty * i
     } Bananas`;
     //subtract points from player
     currentPlayer.points = currentPlayer.points - 10;
     if (currentPlayer.points < 0) {
       currentPlayer.points = 0;
     }
-    //stop timer condition added to stop timer when player selects wrong letter
-    if (j === 0 || stopTimer === true) {
+    //stopTimer conditional added to stop timer when player selects wrong letter
+    if (j === 0 || stopTimer === true || trackerArr.length === 0) {
       clearInterval(timer);
-      spin1El.style.fontSize = "75px";
+      timerStop(timerSound);
       switchPlayer();
+      spin1El.classList.remove("spinwin");
+      spin1El.classList.add("spin");
     } else {
       j--;
     }
@@ -555,4 +556,18 @@ function enterName() {
     clearBoard();
     newRound();
   });
+}
+function soundPlay(sound) {
+  spinSound.loop = true;
+  spinSound.play();
+}
+function soundStop(sound) {
+  spinSound.pause();
+}
+function timerPlay(sound) {
+  timerSound.loop = true;
+  timerSound.play();
+}
+function timerStop(sound) {
+  timerSound.pause();
 }
