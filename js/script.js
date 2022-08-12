@@ -35,6 +35,8 @@ const timerSolvePuzz = 1000;
 const timerPenalty = -10;
 const timerSound = new Audio("../sound/timer.mp3");
 const spinSound = new Audio("../sound/spin.mp3");
+const wrongSound = new Audio("../sound/wrong.wav");
+const correctSound = new Audio("../sound/correct.wav");
 /*---- app's state (variables) ----*/
 let round;
 let player;
@@ -274,6 +276,7 @@ function checkBoard(letter, mode) {
   });
   //SPIN MODE (MODE 0)
   if (x === true && mode === 0) {
+    soundPlay(correctSound, false);
     letterButtStatus = false;
     changeButtonState();
     compareCharArr.forEach(function (char, i) {
@@ -311,6 +314,7 @@ function checkBoard(letter, mode) {
   }
   //SOLVE MODE (MODE 1)
   else if (mode === 1 && x === true) {
+    soundPlay(correctSound, false);
     letterButtStatus = true;
     compareCharArr.forEach(function (char, i) {
       if (char === letter) {
@@ -340,7 +344,10 @@ function checkBoard(letter, mode) {
     //Round Win Check
     assignRoundWins();
     gameWinLogic();
-  } else switchPlayer();
+  } else {
+    soundPlay(wrongSound, false);
+    switchPlayer();
+  }
   console.log(trackerArr);
   console.log(trackerArr.length);
 }
@@ -367,7 +374,8 @@ function switchPlayer() {
   }
 }
 function removeLetter(e) {
-  e.target.remove();
+  e.target.classList.remove("chooseletter");
+  e.target.classList.add("fadeletter");
   checkBoard(e.target.id, mode);
 }
 function assignRoundWins() {
@@ -415,7 +423,7 @@ function clearBoard() {
   clear.forEach(function (div) {
     div.remove();
   });
-  clear = document.querySelectorAll(".chooseletterclose");
+  clear = document.querySelectorAll(".fadeletter");
   clear.forEach(function (div) {
     div.remove();
   });
@@ -468,7 +476,7 @@ function displayWinScreen() {
   spinButtStatus = false;
 }
 function animatespinner(result) {
-  soundPlay(spinSound);
+  soundPlay(spinSound, true);
   let timer = setInterval(flip, 60);
   let i = 0;
   let count = 0;
@@ -490,7 +498,7 @@ function animatespinner(result) {
 function startSolveTimer(deltaT, bigNum) {
   stopTimer = false;
   //create array for display with elements to display during countdown
-  timerPlay(timerSound);
+  soundPlay(timerSound, true);
   for (let j = bigNum; j > 0; j--) {
     solveTimerDisplay[j] = j;
   }
@@ -513,7 +521,7 @@ function startSolveTimer(deltaT, bigNum) {
     //stopTimer conditional added to stop timer when player selects wrong letter
     if (j === 0 || stopTimer === true || trackerArr.length === 0) {
       clearInterval(timer);
-      timerStop(timerSound);
+      soundStop(timerSound);
       switchPlayer();
       spin1El.classList.remove("spinwin");
       spin1El.classList.add("spin");
@@ -557,17 +565,11 @@ function enterName() {
     newRound();
   });
 }
-function soundPlay(sound) {
-  spinSound.loop = true;
-  spinSound.play();
+//accepts cached sound as a variable and option to loop(true) or not to loop(false)
+function soundPlay(sound, loop) {
+  sound.loop = loop;
+  sound.play();
 }
 function soundStop(sound) {
-  spinSound.pause();
-}
-function timerPlay(sound) {
-  timerSound.loop = true;
-  timerSound.play();
-}
-function timerStop(sound) {
-  timerSound.pause();
+  sound.pause();
 }
