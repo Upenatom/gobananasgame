@@ -17,6 +17,7 @@
 ![GO BANANAS normal play](https://i.imgur.com/rYCP744.png)
 ![GO BANANAS Solve Timer](https://i.imgur.com/AO2B4Ax.png)
 ![GO BANANAS lost bananas](https://i.imgur.com/rYCP744.png)
+![GO BANANAS lost bananas](https://i.imgur.com/bBn1zrC.png)
 
 ---
 
